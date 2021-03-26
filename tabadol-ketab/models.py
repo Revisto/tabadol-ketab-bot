@@ -21,5 +21,3 @@ class TabadolKetab:
             books.append({"book_name": book_name, "book_details": book_details})
         
         return books
-
-TabadolKetab().search_for_a_book("کی")
