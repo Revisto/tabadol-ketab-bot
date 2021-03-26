@@ -14,8 +14,7 @@ def search_a_book_by_only_name(update, context):
         update.message.reply_text(book["book_details"])
     
 def goodreads_books_in_tabadol_ketab_intro(update, context):    
-    update.message.reply_text("""خب. حالا یوزرنیم Goodreadsیت رو بفرست. 
-    مثلا: 129432286-revisto
+    update.message.reply_text("""خب. حالا یوزرنیم Goodreadsیت رو بفرست.  \n\n\n مثلا: 129432286-revisto
     """)
     return GET_USERNAME_GOODREADS
 
