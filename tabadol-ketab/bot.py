@@ -20,13 +20,15 @@ def goodreads_books_in_tabadol_ketab_intro(update, context):
 
 def goodreads_books_in_tabadol_ketab_checker(update, context):
     update.message.reply_text("بزن بریم تو کارش. شاید یکمی طول بکشه...")
-    
     books = TabadolKetab().search_for_books(Goodreads().get_want_to_read_books_names(update.message.text))
     if not is_not_empty(books):
         update.message.reply_text("ای بابا. مثل اینکه این کتابایی که تو Goodreadsیت هستنو ندارن :(((((")
     for book in books:
         update.message.reply_text(book)
     return ConversationHandler.END
+
+def start(update, context):
+    update.message.reply_text("خب. سلااااام.\n\nبا این بات چیکارا میتونی بکنی؟ \nمیتونی اسم کتابو بفرستو و من بهت بگم که آیا توی تبادل موجود هست یا نه.\n\nمیتونی این کامند رو بزنی و بعد یوزرنیم گودریدزتو بدی بهم تا همه کتابای want to read گودریدزتو چک کنم و بهت بگم کدوما توی تبادل موجوده. /goodreadsbooksintabadol")
 
 def cancel(update, context):
     update.message.reply_text("حله")
@@ -44,10 +46,12 @@ def main():
         states={
             GET_USERNAME_GOODREADS: [MessageHandler(Filters.text, goodreads_books_in_tabadol_ketab_checker)],
         },
-        fallbacks=[CommandHandler('cancel', cancel)],
+        fallbacks=[CommandHandler('cancel', cancel), CommandHandler('help', cancel), CommandHandler('start', cancel)],
     )
 
     dp.add_handler(goodreads_in_tabadolketab_converstation)
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("help", start))
     dp.add_handler(MessageHandler(Filters.text, search_a_book_by_only_name))
 
     updater.start_polling()
