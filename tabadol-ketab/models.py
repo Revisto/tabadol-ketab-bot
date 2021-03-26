@@ -18,6 +18,7 @@ class TabadolKetab:
             book_details = book_details.replace("\n","")
             book_details = book_details.replace("][","\n")
             book_details = book_details.replace("]","").replace("[","")
+            book_details = f"{book_name}: \n\n\n {book_details}" 
             books.append({"book_name": book_name, "book_details": book_details})
         
         return books
