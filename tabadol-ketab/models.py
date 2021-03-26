@@ -22,3 +22,25 @@ class TabadolKetab:
             books.append({"book_name": book_name, "book_details": book_details})
         
         return books
+
+
+class Goodreads:
+    def __init__(self):
+        self.goodreads_want_to_read_books_url = "https://www.goodreads.com/review/list/{username}?ref=nav_mybooks&shelf=to-read"
+
+    def get_want_to_read_books_names(self, username):
+        request = requests.get(self.goodreads_want_to_read_books_url.format(username=username))
+        soup = BeautifulSoup(request.content, features="lxml")
+        books_element_body = soup.find("tbody", {"id": "booksBody"})
+        goodreads_books_elements = books_element_body.find_all("td", {"class": "title"})
+        books = []
+        for goodreads_book_element in goodreads_books_elements:
+            book_title = goodreads_book_element.text
+            book_title = book_title.split(":")[0]
+            book_title = book_title.replace("  ","")
+            book_title = book_title.replace("\n","")
+            book_title = book_title[6:]
+            books.append(book_title)
+        return books
+
+Goodreads().get_want_to_read_books_names("129432286-revisto")
