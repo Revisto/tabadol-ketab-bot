@@ -42,5 +42,3 @@ class Goodreads:
             book_title = book_title[6:]
             books.append(book_title)
         return books
-
-Goodreads().get_want_to_read_books_names("129432286-revisto")
