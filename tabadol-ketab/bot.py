@@ -19,6 +19,8 @@ def goodreads_books_in_tabadol_ketab_intro(update, context):
     return GET_USERNAME_GOODREADS
 
 def goodreads_books_in_tabadol_ketab_checker(update, context):
+    update.message.reply_text("بزن بریم تو کارش. شاید یکمی طول بکشه...")
+    
     books = TabadolKetab().search_for_books(Goodreads().get_want_to_read_books_names(update.message.text))
     if not is_not_empty(books):
         update.message.reply_text("ای بابا. مثل اینکه این کتابایی که تو Goodreadsیت هستنو ندارن :(((((")
