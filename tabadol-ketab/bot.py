@@ -46,6 +46,7 @@ def main():
     )
 
     dp.add_handler(goodreads_in_tabadolketab_converstation)
+    dp.add_handler(MessageHandler(Filters.text, search_a_book_by_only_name))
 
     updater.start_polling()
     updater.idle()
