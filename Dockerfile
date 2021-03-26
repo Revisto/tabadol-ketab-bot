@@ -1,6 +1,6 @@
 FROM python:3.8
 
-COPY mc_bot /app
+COPY tabadol-ketab /app
 WORKDIR /app
 
 RUN pip3 install -U setuptools
