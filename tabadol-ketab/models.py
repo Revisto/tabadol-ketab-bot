@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import setting
+from validator_collection import is_not_empty
 
 class TabadolKetab:
     def __init__(self):
@@ -23,6 +24,14 @@ class TabadolKetab:
         
         return books
 
+    def search_for_books(self, book_names):
+        books = []
+        for book_name in book_names:
+            tabadolketab_book_search_result = TabadolKetab().search_for_a_book(book_name)
+            if is_not_empty(tabadolketab_book_search_result):
+                books.append(book_name + " : " + tabadolketab_book_search_result[0]["book_name"])
+
+        return books
 
 class Goodreads:
     def __init__(self):
