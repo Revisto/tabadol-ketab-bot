@@ -47,6 +47,7 @@ class Goodreads:
             book_title = goodreads_book_element.text
             book_title = book_title.split(":")[0]
             book_title = book_title.split(";")[0]
+            book_title = book_title.split("؛")[0]
             book_title = book_title.replace("  ","")
             book_title = book_title.replace("\n","")
             book_title = book_title[6:]
