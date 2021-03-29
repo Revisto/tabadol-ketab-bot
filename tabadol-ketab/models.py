@@ -45,11 +45,15 @@ class Goodreads:
         books = []
         for goodreads_book_element in goodreads_books_elements:
             book_title = goodreads_book_element.text
-            book_title = book_title.split(":")[0]
-            book_title = book_title.split(";")[0]
-            book_title = book_title.split("؛")[0]
+            for split_option in [":",";","؛",",","،"]:
+                book_title = book_title.split(split_option)[0]
+                
             book_title = book_title.replace("  ","")
             book_title = book_title.replace("\n","")
             book_title = book_title[6:]
             books.append(book_title)
         return books
+
+
+
+
