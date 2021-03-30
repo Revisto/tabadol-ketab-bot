@@ -28,7 +28,7 @@ def goodreads_books_in_tabadol_ketab_checker(update, context):
     update.message.reply_text("\n".join(goodreads_books))
     books = TabadolKetab().search_for_books(goodreads_books)
     if not is_not_empty(books):
-        update.message.reply_text("ای بابا. مثل اینکه این کتابایی که تو Goodreadsیت هستنو ندارن :(((((")
+        update.message.reply_text("ای بابا. مثل اینکه این کتابایی که تو Goodreadsیت هستنو ندارن :(")
         return ConversationHandler.END
     for book in books:
         update.message.reply_text(book)
