@@ -4,3 +4,4 @@ requests
 validator_collection
 bs4
 lxml
+selenium
