@@ -53,6 +53,8 @@ class Goodreads:
         driver.close()
         soup = BeautifulSoup(request_content, features="lxml")
         books_element_body = soup.find("tbody", {"id": "booksBody"})
+        if not is_not_empty(books_element_body):
+            return []
         goodreads_books_elements = books_element_body.find_all("td", {"class": "title"})
         books = []
         for goodreads_book_element in goodreads_books_elements:
@@ -70,4 +72,3 @@ class Goodreads:
         for i in range(times):
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             sleep(1)
-
