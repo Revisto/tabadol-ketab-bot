@@ -2,7 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 import setting
 from validator_collection import is_not_empty
-
+from selenium import webdriver
+from time import sleep
 class TabadolKetab:
     def __init__(self):
         self.tabadol_ketab_search_url = "https://book.tabadolketab.com/searched?bookname={book_name}&motarjem=&moalef=&nasher=&categories=&conditionType=AND"
@@ -35,11 +36,15 @@ class TabadolKetab:
 
 class Goodreads:
     def __init__(self):
-        self.goodreads_want_to_read_books_url = "https://www.goodreads.com/review/list/{username}?ref=nav_mybooks&shelf=to-read&per_page=infinite"
+        self.goodreads_want_to_read_books_url = "https://www.goodreads.com/review/list/{username}?ref=nav_mybooks&shelf=to-read&per_page=100"
 
     def get_want_to_read_books_names(self, username):
-        request = requests.get(self.goodreads_want_to_read_books_url.format(username=username))
-        soup = BeautifulSoup(request.content, features="lxml")
+        #request = requests.get(self.goodreads_want_to_read_books_url.format(username=username))
+        driver = webdriver.PhantomJS()
+        driver.get(self.goodreads_want_to_read_books_url.format(username=username))
+        Goodreads().scroll_down(driver)
+        request_content = driver.page_source
+        soup = BeautifulSoup(request_content, features="lxml")
         books_element_body = soup.find("tbody", {"id": "booksBody"})
         goodreads_books_elements = books_element_body.find_all("td", {"class": "title"})
         books = []
@@ -54,6 +59,9 @@ class Goodreads:
             books.append(book_title)
         return books
 
+    def scroll_down(self, driver, times=10):
+        for i in range(times):
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            sleep(1)
 
-
-
+print (len(Goodreads().get_want_to_read_books_names("129432286-revisto")))
