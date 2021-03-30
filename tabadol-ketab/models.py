@@ -3,7 +3,9 @@ from bs4 import BeautifulSoup
 import setting
 from validator_collection import is_not_empty
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from time import sleep
+
 class TabadolKetab:
     def __init__(self):
         self.tabadol_ketab_search_url = "https://book.tabadolketab.com/searched?bookname={book_name}&motarjem=&moalef=&nasher=&categories=&conditionType=AND"
@@ -40,10 +42,15 @@ class Goodreads:
 
     def get_want_to_read_books_names(self, username):
         #request = requests.get(self.goodreads_want_to_read_books_url.format(username=username))
-        driver = webdriver.PhantomJS()
+        options = Options()
+        options.add_argument("--headless")  
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
+        driver = webdriver.Chrome("/usr/local/bin/chromedriver", chrome_options=options)
         driver.get(self.goodreads_want_to_read_books_url.format(username=username))
         Goodreads().scroll_down(driver)
         request_content = driver.page_source
+        driver.close()
         soup = BeautifulSoup(request_content, features="lxml")
         books_element_body = soup.find("tbody", {"id": "booksBody"})
         goodreads_books_elements = books_element_body.find_all("td", {"class": "title"})
@@ -64,4 +71,3 @@ class Goodreads:
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             sleep(1)
 
-print (len(Goodreads().get_want_to_read_books_names("129432286-revisto")))
