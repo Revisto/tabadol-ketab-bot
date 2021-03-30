@@ -1,3 +1,4 @@
 .env
 .vscode/settings.json
 tabadol-ketab/__pycache__
+tabadol-ketab/ghostdriver.log
