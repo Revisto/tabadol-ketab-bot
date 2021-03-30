@@ -8,13 +8,20 @@ RUN apt-get install -y libssl-dev libffi-dev
 RUN apt-get install -y libxml2-dev libxslt1-dev zlib1g-dev 
 RUN pip3 install -r requirements.txt
 
-RUN apt-get install build-essential chrpath libssl-dev libxft-dev -y
-RUN apt-get install libfreetype6 libfreetype6-dev -y
-RUN apt-get install libfontconfig1 libfontconfig1-dev -y
-CMD export PHANTOM_JS="phantomjs-2.1.1-linux-x86_64"
-CMD wget https://github.com/Medium/phantomjs/releases/download/v2.1.1/$PHANTOM_JS.tar.bz2
-CMD tar xvjf $PHANTOM_JS.tar.bz2
-CMD mv $PHANTOM_JS /usr/local/share
-CMD ln -sf /usr/local/share/$PHANTOM_JS/bin/phantomjs /usr/local/bin
+RUN apt-get update -y
+RUN apt-get upgrade -y
+
+
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+RUN apt-get -y update
+RUN apt-get install -y google-chrome-stable
+
+# install chromedriver
+RUN apt-get install -yqq unzip
+RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip
+RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/
+
 
 CMD ["python3","bot.py"]
+
