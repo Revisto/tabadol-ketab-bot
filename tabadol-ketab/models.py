@@ -38,7 +38,7 @@ class TabadolKetab:
 
 class Goodreads:
     def __init__(self):
-        self.goodreads_want_to_read_books_url = "https://www.goodreads.com/review/list/{username}?ref=nav_mybooks&shelf=to-read&per_page=100"
+        self.goodreads_want_to_read_books_url = "https://www.goodreads.com/review/list/{username}?ref=nav_mybooks&shelf=to-read&per_page=infinite"
 
     def get_want_to_read_books_names(self, username):
         #request = requests.get(self.goodreads_want_to_read_books_url.format(username=username))
