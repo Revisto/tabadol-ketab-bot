@@ -36,6 +36,27 @@ class TabadolKetab:
 
         return books
 
+    def search_for_books_and_send_book_names_immediately(self, book_names, update):
+        books = []
+        for book_name in book_names:
+            tabadolketab_book_search_result = TabadolKetab().search_for_a_book(book_name)
+            if is_not_empty(tabadolketab_book_search_result):
+                books.append(book_name + " : " + tabadolketab_book_search_result[0]["book_name"])
+                telegram_bot(update).reply_text(books[-1])
+
+        return books
+
+
+
+class telegram_bot:
+    def __init__(self, update):
+        self.update = update
+        
+    def reply_text(self, message):
+        self.update.reply_text(message)
+
+
+
 class Goodreads:
     def __init__(self):
         self.goodreads_want_to_read_books_url = "https://www.goodreads.com/review/list/{username}?ref=nav_mybooks&shelf=to-read&per_page=infinite"
