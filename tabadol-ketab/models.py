@@ -53,7 +53,7 @@ class telegram_bot:
         self.update = update
         
     def reply_text(self, message):
-        self.update.reply_text(message)
+        self.update.message.reply_text(message)
 
 
 
