@@ -5,6 +5,7 @@ import setting
 from models import TabadolKetab, Goodreads
 
 GET_USERNAME_GOODREADS = 0
+GET_BOOKS_NAMES = 0
 def search_a_book_by_only_name(update, context):
     update.message.reply_text(" بزار بگردم....")
     books = TabadolKetab().search_for_a_book(update.message.text)
@@ -13,10 +14,22 @@ def search_a_book_by_only_name(update, context):
     for book in books:
         update.message.reply_text(book["book_details"])
     
-def goodreads_books_in_tabadol_ketab_intro(update, context):    
+def goodreads_search_multiple_books_intro(update, context):    
     update.message.reply_text("""خب. حالا یوزرنیم Goodreadsیت رو بفرست.  \n\n\n مثلا: 129432286-revisto
     """)
     return GET_USERNAME_GOODREADS
+
+def search_books_in_tabadol_ketab_intro(update, context):    
+    update.message.reply_text("""خب حالا اسم کتابایی که میخوای سرچ کنم رو برام بفرست و بین هر اسم یه اینتر بزن :)  \n\n\n مثلا:\n\nهر روز\nناطوردشت\nشازده کوچولو\nسیزده دلیل برای این که
+    """)
+    return GET_BOOKS_NAMES
+
+def search_multiple_books(update, context):
+    update.message.reply_text(" بزار بگردم....")
+    books = update.message.text
+    multiple_books_list = books.split("\n")
+    TabadolKetab().search_for_books_and_send_book_names_immediately(multiple_books_list, update)
+    return ConversationHandler.END
 
 def goodreads_books_in_tabadol_ketab_checker(update, context):
     update.message.reply_text("بزن بریم تو کارش. شاید یکمی طول بکشه...")
@@ -45,9 +58,17 @@ def main():
     #dp.add_handler(MessageHandler(Filters.text , search_a_book_by_only_name))
    
     goodreads_in_tabadolketab_converstation = ConversationHandler(
-        entry_points=[CommandHandler('goodreadsbooksintabadol', goodreads_books_in_tabadol_ketab_intro)],
+        entry_points=[CommandHandler('goodreadsbooksintabadol', search_books_in_tabadol_ketab_intro)],
         states={
             GET_USERNAME_GOODREADS: [MessageHandler(Filters.text, goodreads_books_in_tabadol_ketab_checker)],
+        },
+        fallbacks=[CommandHandler('cancel', cancel), CommandHandler('help', cancel), CommandHandler('start', cancel)],
+    )
+
+    goodreads_in_tabadolketab_converstation = ConversationHandler(
+        entry_points=[CommandHandler('searchmultiplebooks', search_books_in_tabadol_ketab_intro)],
+        states={
+            GET_BOOKS_NAMES: [MessageHandler(Filters.text, search_multiple_books)],
         },
         fallbacks=[CommandHandler('cancel', cancel), CommandHandler('help', cancel), CommandHandler('start', cancel)],
     )
@@ -63,3 +84,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
