@@ -65,7 +65,7 @@ def main():
         fallbacks=[CommandHandler('cancel', cancel), CommandHandler('help', cancel), CommandHandler('start', cancel)],
     )
 
-    goodreads_in_tabadolketab_converstation = ConversationHandler(
+    search_multiple_books_converstation = ConversationHandler(
         entry_points=[CommandHandler('searchmultiplebooks', search_books_in_tabadol_ketab_intro)],
         states={
             GET_BOOKS_NAMES: [MessageHandler(Filters.text, search_multiple_books)],
@@ -74,6 +74,8 @@ def main():
     )
 
     dp.add_handler(goodreads_in_tabadolketab_converstation)
+    dp.add_handler(search_multiple_books_converstation)
+    
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", start))
     dp.add_handler(MessageHandler(Filters.text, search_a_book_by_only_name))
