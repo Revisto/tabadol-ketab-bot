@@ -58,7 +58,7 @@ def main():
     #dp.add_handler(MessageHandler(Filters.text , search_a_book_by_only_name))
    
     goodreads_in_tabadolketab_converstation = ConversationHandler(
-        entry_points=[CommandHandler('goodreadsbooksintabadol', search_books_in_tabadol_ketab_intro)],
+        entry_points=[CommandHandler('goodreadsbooksintabadol', goodreads_search_multiple_books_intro)],
         states={
             GET_USERNAME_GOODREADS: [MessageHandler(Filters.text, goodreads_books_in_tabadol_ketab_checker)],
         },
