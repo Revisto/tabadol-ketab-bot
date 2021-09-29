@@ -14,9 +14,13 @@ def search_a_book_by_only_name(update, context):
     for book in books:
         update.message.reply_text(book["book_details"])
     
-def goodreads_search_multiple_books_intro(update, context):    
-    update.message.reply_text("""خب. حالا یوزرنیم Goodreadsیت رو بفرست.  \n\n\n مثلا: 129432286-revisto
-    """)
+def goodreads_search_multiple_books_intro(update, context):
+    if context.user_data.get("goodreads_id") is not None:
+        update.message.reply_text(f"""خب. حالا یوزرنیم Goodreadsیت رو بفرست یا.  \n\n\n اگر میخوای با این یوزرنیم {context.user_data.get("goodreads_id")} پیش بری 1 رو بفرست.
+        """)
+    else:
+        update.message.reply_text("""خب. حالا یوزرنیم Goodreadsیت رو بفرست.  \n\n\n مثلا: 129432286-revisto
+        """)
     return GET_USERNAME_GOODREADS
 
 def search_books_in_tabadol_ketab_intro(update, context):    
@@ -33,6 +37,11 @@ def search_multiple_books(update, context):
 
 def goodreads_books_in_tabadol_ketab_checker(update, context):
     update.message.reply_text("بزن بریم تو کارش. شاید یکمی طول بکشه...")
+    goodreads_username = update.message.text
+    if goodreads_username == "1" or goodreads_username == "۱":
+        goodreads_username = context.user_data.get("goodreads_id")
+    else:
+        context.user_data["goodreads_id"] = goodreads_username
     goodreads_books = Goodreads().get_want_to_read_books_names(update.message.text)
     if not is_not_empty(goodreads_books):
         update.message.reply_text("یا یوزرنیمتو اشتباه وارد کردی, یا هیچ کتابی تو دسته want to readیت نداری :((((")
