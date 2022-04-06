@@ -60,11 +60,10 @@ def cancel(update, context):
     update.message.reply_text("حله")
     return ConversationHandler.END
 
+
 def main():
     updater = Updater(setting.telegram_access_token, use_context=True)
     dp = updater.dispatcher
-
-    #dp.add_handler(MessageHandler(Filters.text , search_a_book_by_only_name))
    
     goodreads_in_tabadolketab_converstation = ConversationHandler(
         entry_points=[CommandHandler('goodreadsbooksintabadol', goodreads_search_multiple_books_intro)],

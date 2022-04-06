@@ -1,28 +1,58 @@
 import requests
 from bs4 import BeautifulSoup
-import setting
 from validator_collection import is_not_empty
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from time import sleep
+from persiantools.jdatetime import JalaliDate
+from humanize import intcomma
+
+MONTH_NAMES_FA = [
+    None,
+    "فروردین",
+    "اردیبهشت",
+    "خرداد",
+    "تیر",
+    "مرداد",
+    "شهریور",
+    "مهر",
+    "آبان",
+    "آذر",
+    "دی",
+    "بهمن",
+    "اسفند",
+]
 
 class TabadolKetab:
     def __init__(self):
-        self.tabadol_ketab_search_url = "https://book.tabadolketab.com/searched?bookname={book_name}&motarjem=&moalef=&nasher=&categories=&conditionType=AND"
+        self.tabadol_ketab_search_url = "https://book.tabadolketab.com/v1/api/tabaadol-e-ketaab/books?filter[name]={book_name}"
 
     def search_for_a_book(self, book_name):
-        request = requests.get(self.tabadol_ketab_search_url.format(book_name=book_name))
-        soup = BeautifulSoup(request.content, features="lxml")
-        found_books_elements = soup.find_all("div", {"class": "tb-index-book"})
+        results = requests.get(self.tabadol_ketab_search_url.format(book_name=book_name))
+        results = results.json()
         books = []
-        for book_element in found_books_elements:
-            book_name = book_element.find("h3", {"class": "tb-book-title"}).text
-            book_details = book_element.find("div", {"class": "tb-details-book"}).text
-            book_details = book_details.replace("  ","")
-            book_details = book_details.replace("\n","")
-            book_details = book_details.replace("][","\n")
-            book_details = book_details.replace("]","").replace("[","")
-            book_details = f"{book_name}: \n\n\n {book_details}" 
+        for book_sum in results["result"]["docs"]:
+            book_request = requests.get("https://book.tabadolketab.com/v1/api/tabaadol-e-ketaab/book/" + book_sum["id"]).json()
+            book_name = book_request.get("name")
+            book_category = (book_request.get("category")).get("title") if book_request.get("category") is not None else ""
+            book_author = (book_request.get("author")).get("title") if book_request.get("author") is not None else ""
+            book_publisher = (book_request.get("publisher")).get("title") if book_request.get("publisher") is not None else ""
+            book_translator = (book_request.get("translator")).get("title") if book_request.get("translator") is not None else ""
+            book_price = intcomma(int(book_request.get("afterDiscount")))
+            book_confirm_date = (book_request.get("confirmDate").split("T")[0]).split("-")
+            book_confirm_date = str(JalaliDate.to_jalali(int(book_confirm_date[0]), int(book_confirm_date[1]), int(book_confirm_date[2]))).split("-")
+            book_confirm_date_humanized = f"{book_confirm_date[2]} {MONTH_NAMES_FA[int(book_confirm_date[1])]} {book_confirm_date[0]}"
+            book_details = f"""
+نام کتاب: {book_name}
+
+
+دسته بندی: {book_category}
+نویسنده: {book_author}
+مترجم: {book_translator}
+ناشر: {book_publisher}
+قیمت: {book_price}
+تاریخ ورود: {book_confirm_date_humanized}
+            """
             books.append({"book_name": book_name, "book_details": book_details})
         
         return books
@@ -67,7 +97,7 @@ class Goodreads:
         options.add_argument("--headless")  
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
-        driver = webdriver.Chrome("/usr/local/bin/chromedriver", chrome_options=options)
+        driver = webdriver.Chrome("/usr/bin/chromedriver", chrome_options=options)
         driver.get(self.goodreads_want_to_read_books_url.format(username=username))
         Goodreads().scroll_down(driver)
         request_content = driver.page_source
@@ -89,7 +119,7 @@ class Goodreads:
             books.append(book_title)
         return books
 
-    def scroll_down(self, driver, times=10):
+    def scroll_down(self, driver, times=40):
         for i in range(times):
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            sleep(1)
+            sleep(0.4)
