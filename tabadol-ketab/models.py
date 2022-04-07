@@ -60,18 +60,20 @@ class TabadolKetab:
     def search_for_books(self, book_names):
         books = []
         for book_name in book_names:
-            tabadolketab_book_search_result = TabadolKetab().search_for_a_book(book_name)
-            if is_not_empty(tabadolketab_book_search_result):
-                books.append(book_name + " : " + tabadolketab_book_search_result[0]["book_name"])
+            results = requests.get(self.tabadol_ketab_search_url.format(book_name=book_name))
+            results = results.json()
+            if is_not_empty(results["result"]["docs"]):
+                books.append(book_name + " : " + results["result"]["docs"][0]["name"])
 
         return books
 
     def search_for_books_and_send_book_names_immediately(self, book_names, update):
         books = []
         for book_name in book_names:
-            tabadolketab_book_search_result = TabadolKetab().search_for_a_book(book_name)
-            if is_not_empty(tabadolketab_book_search_result):
-                books.append(book_name + " : " + tabadolketab_book_search_result[0]["book_name"])
+            results = requests.get(self.tabadol_ketab_search_url.format(book_name=book_name))
+            results = results.json()
+            if is_not_empty(results["result"]["docs"]):
+                books.append(book_name + " : " + results["result"]["docs"][0]["name"])
                 telegram_bot(update).reply_text(books[-1])
 
         return books
