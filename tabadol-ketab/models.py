@@ -100,7 +100,7 @@ class Goodreads:
         options.add_argument("--headless")  
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
-        driver = webdriver.Chrome("/usr/bin/chromedriver", chrome_options=options)
+        driver = webdriver.Chrome("/usr/local/bin/chromedriver", chrome_options=options)
         driver.get(self.goodreads_want_to_read_books_url.format(username=username))
         Goodreads().scroll_down(driver)
         request_content = driver.page_source
