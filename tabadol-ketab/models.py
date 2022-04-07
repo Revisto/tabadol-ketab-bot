@@ -1,11 +1,12 @@
 import requests
 from bs4 import BeautifulSoup
 from validator_collection import is_not_empty
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from time import sleep
 from persiantools.jdatetime import JalaliDate
 from humanize import intcomma
+from bs4 import BeautifulSoup
+import math
+import re
 
 MONTH_NAMES_FA = [
     None,
@@ -94,35 +95,45 @@ class Goodreads:
     def __init__(self):
         self.goodreads_want_to_read_books_url = "https://www.goodreads.com/review/list/{username}?ref=nav_mybooks&shelf=to-read&per_page=infinite"
 
-    def get_want_to_read_books_names(self, username):
-        #request = requests.get(self.goodreads_want_to_read_books_url.format(username=username))
-        options = Options()
-        options.add_argument("--headless")  
-        options.add_argument('--no-sandbox')
-        options.add_argument('--disable-dev-shm-usage')
-        driver = webdriver.Chrome("/usr/local/bin/chromedriver", chrome_options=options)
-        driver.get(self.goodreads_want_to_read_books_url.format(username=username))
-        Goodreads().scroll_down(driver)
-        request_content = driver.page_source
-        driver.close()
-        soup = BeautifulSoup(request_content, features="lxml")
-        books_element_body = soup.find("tbody", {"id": "booksBody"})
-        if not is_not_empty(books_element_body):
-            return []
-        goodreads_books_elements = books_element_body.find_all("td", {"class": "title"})
-        books = []
-        for goodreads_book_element in goodreads_books_elements:
-            book_title = goodreads_book_element.text
-            for split_option in [":",";","؛",",","،"]:
-                book_title = book_title.split(split_option)[0]
-                
-            book_title = book_title.replace("  ","")
-            book_title = book_title.replace("\n","")
-            book_title = book_title[6:]
-            books.append(book_title)
-        return books
+    def get_want_to_read_books_names(self, book_list_id):
+        url = f"https://www.goodreads.com/review/list/{book_list_id}?page=1&shelf=to-read&utf8=✓&sort=date_read&order=d"
 
-    def scroll_down(self, driver, times=40):
-        for i in range(times):
-            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            sleep(0.4)
+        # Make a GET request to fetch the raw HTML content
+        html_content = requests.get(url).text
+
+        # Parse the html content
+        soup = BeautifulSoup(html_content, "lxml")
+
+        books = soup.find("table", attrs={"id": "books"})
+        books = books.tbody.find_all("tr")
+
+        number_of_books_read = int(soup.find('span', attrs={"class": "h1Shelf"}).span.text.lstrip('(').rstrip(')'))
+        number_of_pages = math.ceil(number_of_books_read/30)
+
+        books = []
+        for page in range(1, number_of_pages + 1):
+            url = f"https://www.goodreads.com/review/list/{book_list_id}?page={page}&shelf=to-read&utf8=✓&sort=date_read&order=d"
+
+            # Make a GET request to fetch the raw HTML content
+            html_content = requests.get(url).text
+
+            # Parse the html content
+            soup = BeautifulSoup(html_content, "lxml")
+
+            books = soup.find("table", attrs={"id": "books"})
+            books = books.tbody.find_all("tr")
+
+            for book in books:
+                for td in book.find_all("td"):
+                    row_name = td.label.text.replace('\n', ' ').strip()
+                    if row_name == 'title':
+                        book_title = td.div.text.replace('\n', ' ').strip()
+                        book_title = book_title.replace('\u200c', ' ')
+                        book_title = book_title.replace('\u202b', '')
+                        book_title = re.sub("[\(\[].*?[\)\]]", "", book_title)
+                        book_title = re.sub(' +', ' ', book_title)
+                        for split_option in [":",";","؛",",","،"]:
+                            book_title = book_title.split(split_option)[0]
+
+                books.append(book_title)
+        return books

@@ -4,6 +4,5 @@ requests
 validator_collection
 bs4
 lxml
-selenium
 persiantools
 humanize
