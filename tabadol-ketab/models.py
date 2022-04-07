@@ -27,11 +27,11 @@ class TabadolKetab:
     def __init__(self):
         self.tabadol_ketab_search_url = "https://book.tabadolketab.com/v1/api/tabaadol-e-ketaab/books?filter[name]={book_name}"
 
-    def search_for_a_book(self, book_name):
+    def search_for_a_book(self, book_name, update):
         results = requests.get(self.tabadol_ketab_search_url.format(book_name=book_name))
         results = results.json()
         books = []
-        for book_sum in results["result"]["docs"]:
+        for book_sum in results["result"]["docs"][:10]:
             book_request = requests.get("https://book.tabadolketab.com/v1/api/tabaadol-e-ketaab/book/" + book_sum["id"]).json()
             book_name = book_request.get("name")
             book_category = (book_request.get("category")).get("title") if book_request.get("category") is not None else ""
@@ -53,6 +53,7 @@ class TabadolKetab:
 قیمت: {book_price}
 تاریخ ورود: {book_confirm_date_humanized}
             """
+            update.message.reply_text(book_details)
             books.append({"book_name": book_name, "book_details": book_details})
         
         return books

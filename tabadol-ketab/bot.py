@@ -8,11 +8,9 @@ GET_USERNAME_GOODREADS = 0
 GET_BOOKS_NAMES = 0
 def search_a_book_by_only_name(update, context):
     update.message.reply_text(" بزار بگردم....")
-    books = TabadolKetab().search_for_a_book(update.message.text)
+    books = TabadolKetab().search_for_a_book(update.message.text, update)
     if not is_not_empty(books):
         update.message.reply_text("ای بابا. مثل اینکه این کتابو ندارن :(((((")
-    for book in books:
-        update.message.reply_text(book["book_details"])
     
 def goodreads_search_multiple_books_intro(update, context):
     if context.user_data.get("goodreads_id") is not None:
