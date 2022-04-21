@@ -36,7 +36,7 @@ class TabadolKetab:
             book_author = (book_request.get("author")).get("title") if book_request.get("author") is not None else ""
             book_publisher = (book_request.get("publisher")).get("title") if book_request.get("publisher") is not None else ""
             book_translator = (book_request.get("translator")).get("title") if book_request.get("translator") is not None else ""
-            book_price = intcomma(int(book_request.get("afterDiscount"))/10)
+            book_price = intcomma(int(int(book_request.get("afterDiscount"))/10))
             book_confirm_date = (book_request.get("confirmDate").split("T")[0]).split("-")
             try:
                 book_confirm_date = str(JalaliDate.to_jalali(int(book_confirm_date[0]), int(book_confirm_date[1]), int(book_confirm_date[2]))).split("-")
