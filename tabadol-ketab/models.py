@@ -38,8 +38,11 @@ class TabadolKetab:
             book_translator = (book_request.get("translator")).get("title") if book_request.get("translator") is not None else ""
             book_price = intcomma(int(book_request.get("afterDiscount"))/10)
             book_confirm_date = (book_request.get("confirmDate").split("T")[0]).split("-")
-            book_confirm_date = str(JalaliDate.to_jalali(int(book_confirm_date[0]), int(book_confirm_date[1]), int(book_confirm_date[2]))).split("-")
-            book_confirm_date_humanized = f"{book_confirm_date[2]} {MONTH_NAMES_FA[int(book_confirm_date[1])]} {book_confirm_date[0]}"
+            try:
+                book_confirm_date = str(JalaliDate.to_jalali(int(book_confirm_date[0]), int(book_confirm_date[1]), int(book_confirm_date[2]))).split("-")
+                book_confirm_date_humanized = f"{book_confirm_date[2]} {MONTH_NAMES_FA[int(book_confirm_date[1])]} {book_confirm_date[0]}"
+            except:
+                book_confirm_date_humanized = "- - -"
             book_details = f"""
 نام کتاب: {book_name}
 
