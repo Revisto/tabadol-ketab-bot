@@ -90,7 +90,7 @@ class telegram_bot:
 
 class Goodreads:
 
-    def get_books_read_for_year(self, GOODREADS_USERID, GOODREADS_KEY='XlkrscdJCPAF0m9mjtwFtA'):
+    def get_want_to_read_books_names(self, GOODREADS_USERID, GOODREADS_KEY='XlkrscdJCPAF0m9mjtwFtA'):
         all_titles = []
         for page in range(1, 11):
             params = {
