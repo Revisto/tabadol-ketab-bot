@@ -45,6 +45,12 @@ def goodreads_books_in_tabadol_ketab_checker(update, context):
         update.message.reply_text("یا یوزرنیمتو اشتباه وارد کردی, یا هیچ کتابی تو دسته want to readیت نداری :((((")
         return ConversationHandler.END
     update.message.reply_text("این کتابایی هستن که شما میخواین بخونین. تا دقایقی دیگه نتیجه رو بهتون میگم:")
+    goodreads_books_message = ""
+    for goodreads_book in goodreads_books:
+        if len(goodreads_books_message) + len(goodreads_book) > 4096:
+            update.message.reply_text(goodreads_books_message)
+            goodreads_books_message = ""
+        goodreads_books_message += f"{goodreads_book}\n"
     update.message.reply_text("\n".join(goodreads_books))
     books = TabadolKetab().search_for_books_and_send_book_names_immediately(goodreads_books, update)
     if not is_not_empty(books):
